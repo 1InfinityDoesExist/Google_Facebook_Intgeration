@@ -7,4 +7,6 @@ import com.fb.demo.entity.Tenant;
 @Repository
 public interface TenantRepository extends JpaRepository<Tenant, Integer> {
 
+  public Tenant getTenantByName(String name);
+
 }
