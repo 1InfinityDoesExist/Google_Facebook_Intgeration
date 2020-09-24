@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -78,9 +80,22 @@ public class TenantController {
                         .body(new ModelMap().addAttribute("response", listOfTenant));
     }
 
+    @PutMapping(path = "/update/{tenantName}")
+    @ApiImplicitParams({@ApiImplicitParam(name = "tenantName", paramType = "path")})
     public ResponseEntity<?> udpateTenant(
-                    @RequestBody(required = true) TenantUpdateReqeust tenantUpdateReqeust) {
+                    @RequestBody(required = true) TenantUpdateReqeust tenantUpdateReqeust,
+                    @PathVariable(value = "tenantName", required = true) String tenantName)
+                    throws Exception {
+        log.info(":::::TenantController Class, Paritalially Update Tenant:::::");
+        try {
+            tenantService.partiallyUpdateTenant(tenantUpdateReqeust, tenantName);
+            return ResponseEntity.status(HttpStatus.OK).body(new ModelMap().addAttribute("msg",
+                            "Tenant :" + tenantName + " successfully updated."));
+        } catch (final TenantNotFoundException ex) {
+            log.error(":::::No tenant exist with name :" + tenantName);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(new ModelMap().addAttribute("msg", ex.getMessage()));
 
-        return null;
+        }
     }
 }

@@ -1,12 +1,16 @@
 package com.fb.demo.service.impl;
 
 import java.util.Set;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fb.demo.entity.Tenant;
 import com.fb.demo.exception.TenantAlreadyExistException;
 import com.fb.demo.exception.TenantNotFoundException;
 import com.fb.demo.model.request.TenantCreateRequest;
+import com.fb.demo.model.request.TenantUpdateReqeust;
 import com.fb.demo.model.response.TenantCreateResponse;
 import com.fb.demo.repository.TenantRepository;
 import com.fb.demo.service.TenantService;
@@ -60,6 +64,28 @@ public class TenantServiceImpl implements TenantService {
         log.info(":::::Inside TenantServiceImpl Class, getAllTenant method:::::");
         Set<Tenant> listOfTenant = tenantRepository.findTenantByIsActive(false);
         return listOfTenant;
+    }
+
+    @Override
+    public void partiallyUpdateTenant(TenantUpdateReqeust tenantUpdateReqeust, String tenantName)
+                    throws Exception {
+        log.info(":::::Inside TenantServiceImpl Class, updateTenant method:::::");
+        Tenant tenantFromDB = tenantRepository.getTenantByName(tenantName);
+        if (tenantFromDB == null) {
+            throw new TenantNotFoundException("Tenant not found. Please create a tenant first");
+        }
+        JSONObject dbTenantJson =
+                        (JSONObject) new JSONParser()
+                                        .parse(new ObjectMapper().writeValueAsString(tenantFromDB));
+        JSONObject payloadTeanntJson = (JSONObject) new JSONParser()
+                        .parse(new ObjectMapper().writeValueAsString(tenantUpdateReqeust));
+        for (Object obj : payloadTeanntJson.entrySet()) {
+            String param = (String) obj;
+            dbTenantJson.put(param, payloadTeanntJson.get(param));
+        }
+        tenantRepository.save(
+                        new ObjectMapper().readValue(dbTenantJson.toJSONString(), Tenant.class));
+        return;
     }
 
 }

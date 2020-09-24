@@ -4,6 +4,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import com.fb.demo.entity.Tenant;
 import com.fb.demo.model.request.TenantCreateRequest;
+import com.fb.demo.model.request.TenantUpdateReqeust;
 import com.fb.demo.model.response.TenantCreateResponse;
 
 @Service
@@ -15,5 +16,8 @@ public interface TenantService {
     public Tenant getTenantByName(String tenantName) throws Exception;
 
     public Set<Tenant> getAllTenant();
+
+    public void partiallyUpdateTenant(TenantUpdateReqeust tenantUpdateReqeust, String tenantName)
+                    throws Exception;
 
 }
