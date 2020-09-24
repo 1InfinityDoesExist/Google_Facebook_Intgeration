@@ -1,5 +1,6 @@
 package com.fb.demo.controller;
 
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import com.fb.demo.entity.Tenant;
 import com.fb.demo.exception.TenantAlreadyExistException;
 import com.fb.demo.exception.TenantNotFoundException;
 import com.fb.demo.model.request.TenantCreateRequest;
+import com.fb.demo.model.request.TenantUpdateReqeust;
 import com.fb.demo.model.response.TenantCreateResponse;
 import com.fb.demo.service.TenantService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -61,5 +63,24 @@ public class TenantController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body(new ModelMap().addAttribute("msg", ex.getMessage()));
         }
+    }
+
+    @GetMapping(path = "/getAllTenant")
+    @ApiImplicitParams({@ApiImplicitParam(name = "", paramType = "")})
+    public ResponseEntity<?> getAllTenant() {
+        log.info(":::::TenantController Class , getAllTenant method:::::");
+        Set<Tenant> listOfTenant = tenantService.getAllTenant();
+        if (listOfTenant.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK)
+                            .body(new ModelMap().addAttribute("msg", "No tenant exist in the db."));
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ModelMap().addAttribute("response", listOfTenant));
+    }
+
+    public ResponseEntity<?> udpateTenant(
+                    @RequestBody(required = true) TenantUpdateReqeust tenantUpdateReqeust) {
+
+        return null;
     }
 }

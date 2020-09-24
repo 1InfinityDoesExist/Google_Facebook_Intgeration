@@ -1,11 +1,13 @@
 package com.fb.demo.model.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
 
-@lombok.Data
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TenantCreateRequest {
-    private String name;
+public class TenantUpdateReqeust {
     private String description;
     private String version;
     private String url;

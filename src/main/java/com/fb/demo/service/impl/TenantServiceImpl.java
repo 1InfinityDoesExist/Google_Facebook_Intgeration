@@ -1,5 +1,6 @@
 package com.fb.demo.service.impl;
 
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fb.demo.entity.Tenant;
@@ -35,6 +36,8 @@ public class TenantServiceImpl implements TenantService {
         tenant.setUrl(tenantCreateRequest.getUrl());
         tenant.setVersion(tenantCreateRequest.getVersion());
         tenant.setWebsite(tenantCreateRequest.getWebsite());
+        tenant.setOrganizationEmail(tenantCreateRequest.getOrganizationEmail());
+        tenant.setOrganizationMobileNumber(tenantCreateRequest.getOrganizationMobileNumber());
         tenantRepository.save(tenant);
         TenantCreateResponse tenantCreateResponse = new TenantCreateResponse();
         tenantCreateResponse.setId(tenant.getId());
@@ -50,6 +53,13 @@ public class TenantServiceImpl implements TenantService {
             throw new TenantNotFoundException("Tenant not found.");
         }
         return tenantFromDB;
+    }
+
+    @Override
+    public Set<Tenant> getAllTenant() {
+        log.info(":::::Inside TenantServiceImpl Class, getAllTenant method:::::");
+        Set<Tenant> listOfTenant = tenantRepository.findTenantByIsActive(false);
+        return listOfTenant;
     }
 
 }
