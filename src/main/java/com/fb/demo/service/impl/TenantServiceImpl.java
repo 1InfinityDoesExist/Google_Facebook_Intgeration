@@ -1,9 +1,12 @@
 package com.fb.demo.service.impl;
 
-import java.util.Set;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fb.demo.entity.Tenant;
@@ -60,9 +63,11 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public Set<Tenant> getAllTenant() {
-        log.info(":::::Inside TenantServiceImpl Class, getAllTenant method:::::");
-        Set<Tenant> listOfTenant = tenantRepository.findTenantByIsActive(false);
+    public Page<Tenant> getAllTenant(Pageable pageable) {
+        log.info(":::::Inside TenantServiceImpl Class, getAllTenant method:::::");;
+        Page<Tenant> listOfTenant = tenantRepository.findTenantByIsActive(false,
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                                        Sort.by(Sort.Direction.DESC, "id")));
         return listOfTenant;
     }
 
@@ -79,7 +84,7 @@ public class TenantServiceImpl implements TenantService {
                                         .parse(new ObjectMapper().writeValueAsString(tenantFromDB));
         JSONObject payloadTeanntJson = (JSONObject) new JSONParser()
                         .parse(new ObjectMapper().writeValueAsString(tenantUpdateReqeust));
-        for (Object obj : payloadTeanntJson.entrySet()) {
+        for (Object obj : payloadTeanntJson.keySet()) {
             String param = (String) obj;
             dbTenantJson.put(param, payloadTeanntJson.get(param));
         }

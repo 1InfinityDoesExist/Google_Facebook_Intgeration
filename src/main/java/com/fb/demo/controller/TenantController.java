@@ -1,7 +1,9 @@
 package com.fb.demo.controller;
 
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
@@ -69,9 +71,9 @@ public class TenantController {
 
     @GetMapping(path = "/getAllTenant")
     @ApiImplicitParams({@ApiImplicitParam(name = "", paramType = "")})
-    public ResponseEntity<?> getAllTenant() {
+    public ResponseEntity<?> getAllTenant(@PageableDefault(page = 0, value = 5) Pageable pagable) {
         log.info(":::::TenantController Class , getAllTenant method:::::");
-        Set<Tenant> listOfTenant = tenantService.getAllTenant();
+        Page<Tenant> listOfTenant = tenantService.getAllTenant(pagable);
         if (listOfTenant.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK)
                             .body(new ModelMap().addAttribute("msg", "No tenant exist in the db."));
