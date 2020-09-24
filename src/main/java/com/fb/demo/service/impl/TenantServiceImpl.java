@@ -15,41 +15,41 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TenantServiceImpl implements TenantService {
 
-  @Autowired
-  private TenantRepository tenantRepository;
+    @Autowired
+    private TenantRepository tenantRepository;
 
-  @Override
-  public TenantCreateResponse createTenant(TenantCreateRequest tenantCreateRequest)
-        throws Exception {
-    log.info(":::::Inside TenantServiceImpl Class, createTenant method:::::");
-    Tenant tenantFromDB = tenantRepository.getTenantByName(tenantCreateRequest.getName());
-    if (tenantFromDB != null) {
-      throw new TenantAlreadyExistException("Tenant already Exist", tenantFromDB);
+    @Override
+    public TenantCreateResponse createTenant(TenantCreateRequest tenantCreateRequest)
+                    throws Exception {
+        log.info(":::::Inside TenantServiceImpl Class, createTenant method:::::");
+        Tenant tenantFromDB = tenantRepository.getTenantByName(tenantCreateRequest.getName());
+        if (tenantFromDB != null) {
+            throw new TenantAlreadyExistException("Tenant already Exist", tenantFromDB);
+        }
+        Tenant tenant = new Tenant();
+        tenant.setDescription(tenantCreateRequest.getDescription());
+        tenant.setName(tenantCreateRequest.getName());
+        tenant.setOrganizationName(tenantCreateRequest.getOrganizationName());
+        tenant.setRegistrationNumber(tenantCreateRequest.getRegistrationNumber());
+        tenant.setTenantType(tenantCreateRequest.getTenantType());
+        tenant.setUrl(tenantCreateRequest.getUrl());
+        tenant.setVersion(tenantCreateRequest.getVersion());
+        tenant.setWebsite(tenantCreateRequest.getWebsite());
+        tenantRepository.save(tenant);
+        TenantCreateResponse tenantCreateResponse = new TenantCreateResponse();
+        tenantCreateResponse.setId(tenant.getId());
+        tenantCreateResponse.setMessage("Tenant : " + tenant.getName() + " successfully created");
+        return tenantCreateResponse;
     }
-    Tenant tenant = new Tenant();
-    tenant.setDescription(tenantCreateRequest.getDescription());
-    tenant.setName(tenantCreateRequest.getName());
-    tenant.setOrganizationName(tenantCreateRequest.getOrganizationName());
-    tenant.setRegistrationNumber(tenantCreateRequest.getRegistrationNumber());
-    tenant.setTenantType(tenantCreateRequest.getTenantType());
-    tenant.setUrl(tenantCreateRequest.getUrl());
-    tenant.setVersion(tenantCreateRequest.getVersion());
-    tenant.setWebsite(tenantCreateRequest.getWebsite());
-    tenantRepository.save(tenant);
-    TenantCreateResponse tenantCreateResponse = new TenantCreateResponse();
-    tenantCreateResponse.setId(tenant.getId());
-    tenantCreateResponse.setMessage("Tenant : " + tenant.getName() + " successfully created");
-    return tenantCreateResponse;
-  }
 
-  @Override
-  public Tenant getTenantByName(String tenantName) throws Exception {
-    log.info(":::::Inside TenantServiceImpl Class, getTenantByName method::::");
-    Tenant tenantFromDB = tenantRepository.getTenantByName(tenantName);
-    if (tenantFromDB == null) {
-      throw new TenantNotFoundException("Tenant not found.");
+    @Override
+    public Tenant getTenantByName(String tenantName) throws Exception {
+        log.info(":::::Inside TenantServiceImpl Class, getTenantByName method::::");
+        Tenant tenantFromDB = tenantRepository.getTenantByName(tenantName);
+        if (tenantFromDB == null) {
+            throw new TenantNotFoundException("Tenant not found.");
+        }
+        return tenantFromDB;
     }
-    return tenantFromDB;
-  }
 
 }

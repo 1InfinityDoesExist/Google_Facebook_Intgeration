@@ -25,40 +25,41 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TenantController {
 
-  @Autowired
-  private TenantService tenantService;
+    @Autowired
+    private TenantService tenantService;
 
-  @PostMapping(path = "/create", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<?> createTenant(@RequestBody TenantCreateRequest tenantCreateRequest)
-        throws Exception {
-    log.info(":::::TenantController Class , createTenant method:::::");
-    try {
-      TenantCreateResponse tenantCreateResponse = tenantService.createTenant(tenantCreateRequest);
-      return ResponseEntity.status(HttpStatus.CREATED).body(new ModelMap()
-            .addAttribute("msg", tenantCreateResponse.getMessage())
-            .addAttribute("id", tenantCreateResponse.getId()));
-    } catch (TenantAlreadyExistException ex) {
-      log.error(
-            "Tenant already exist in the database. Do change the tenant name and try once again");
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ModelMap().addAttribute("msg", ex.getMessage())
-                  .addAttribute("existing_tenant", ex.getTenant().getName()));
+    @PostMapping(path = "/create", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> createTenant(@RequestBody TenantCreateRequest tenantCreateRequest)
+                    throws Exception {
+        log.info(":::::TenantController Class , createTenant method:::::");
+        try {
+            TenantCreateResponse tenantCreateResponse =
+                            tenantService.createTenant(tenantCreateRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ModelMap()
+                            .addAttribute("msg", tenantCreateResponse.getMessage())
+                            .addAttribute("id", tenantCreateResponse.getId()));
+        } catch (TenantAlreadyExistException ex) {
+            log.error("Tenant already exist in the database. Do change the tenant name and try once again");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(new ModelMap().addAttribute("msg", ex.getMessage())
+                                            .addAttribute("existing_tenant",
+                                                            ex.getTenant().getName()));
+        }
     }
-  }
 
-  @GetMapping(path = "/get", produces = "application/json")
-  @ApiImplicitParams({@ApiImplicitParam(name = "tenantName", paramType = "path")})
-  public ResponseEntity<?> getTenantByName(@RequestParam(required = true) String tenantName)
-        throws Exception {
-    log.info(":::::TenantController Class , getTenantByNam method:::::");
-    try {
-      Tenant tenant = tenantService.getTenantByName(tenantName);
-      return ResponseEntity.status(HttpStatus.OK)
-            .body(new ModelMap().addAttribute("response", tenant));
-    } catch (final TenantNotFoundException ex) {
-      log.error(":::::Tenant not found for the given tenantName :" + tenantName);
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ModelMap().addAttribute("msg", ex.getMessage()));
+    @GetMapping(path = "/get", produces = "application/json")
+    @ApiImplicitParams({@ApiImplicitParam(name = "tenantName", paramType = "path")})
+    public ResponseEntity<?> getTenantByName(@RequestParam(required = true) String tenantName)
+                    throws Exception {
+        log.info(":::::TenantController Class , getTenantByNam method:::::");
+        try {
+            Tenant tenant = tenantService.getTenantByName(tenantName);
+            return ResponseEntity.status(HttpStatus.OK)
+                            .body(new ModelMap().addAttribute("response", tenant));
+        } catch (final TenantNotFoundException ex) {
+            log.error(":::::Tenant not found for the given tenantName :" + tenantName);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(new ModelMap().addAttribute("msg", ex.getMessage()));
+        }
     }
-  }
 }

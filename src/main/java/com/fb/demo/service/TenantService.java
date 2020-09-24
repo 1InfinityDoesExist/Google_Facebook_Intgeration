@@ -8,9 +8,9 @@ import com.fb.demo.model.response.TenantCreateResponse;
 @Service
 public interface TenantService {
 
-  public TenantCreateResponse createTenant(TenantCreateRequest tenantCreateRequest)
-        throws Exception;
+    public TenantCreateResponse createTenant(TenantCreateRequest tenantCreateRequest)
+                    throws Exception;
 
-  public Tenant getTenantByName(String tenantName) throws Exception;
+    public Tenant getTenantByName(String tenantName) throws Exception;
 
 }
