@@ -59,7 +59,14 @@ public class GoogleDeveloperDetailsServiceImpl implements GoogleDeveloperDetails
         if (tenant == null) {
             throw new TenantNotFoundException("Tenant not found.");
         }
-        return googleDeveloperDetailsRepository.findByTenant(tenant.getId());
+        GoogleDeveloperDetails googleDeveloperDetails =
+                        googleDeveloperDetailsRepository.findByTenant(tenant.getId());
+        if (googleDeveloperDetails == null) {
+            throw new GoogleDeveloperDetailsNotFound(
+                            "No googleDeveloperDetails found for the given tenant :"
+                                            + tenant.getName());
+        }
+        return googleDeveloperDetails;
     }
 
     /*
@@ -92,7 +99,7 @@ public class GoogleDeveloperDetailsServiceImpl implements GoogleDeveloperDetails
     }
 
     @Override
-    public void partiallyUpdateGoogleDevDetails(GoogleDevUpdateRequest googleDeveUpdateRequest,
+    public void partiallyUpdateGoogleDevDetails(GoogleDevUpdateRequest googleDevUpdateRequest,
                     String tenantName) throws Exception {
         log.info(":::::Inside GoogleDeveloperDetailsServiceImpl Class, partiallyUpdateGoogleDevDetails method:::::");
         Tenant tenant = tenantRepository.getTenantByName(tenantName);
@@ -109,7 +116,7 @@ public class GoogleDeveloperDetailsServiceImpl implements GoogleDeveloperDetails
         JSONObject dbGoogleDevDetails = (JSONObject) new JSONParser()
                         .parse(new ObjectMapper().writeValueAsString(googleDeveloperDetails));
         JSONObject payloadGoogleDevDetails = (JSONObject) new JSONParser()
-                        .parse(new ObjectMapper().writeValueAsString(googleDeveUpdateRequest));
+                        .parse(new ObjectMapper().writeValueAsString(googleDevUpdateRequest));
         for (Object obj : payloadGoogleDevDetails.keySet()) {
             String param = (String) obj;
             dbGoogleDevDetails.put(param, payloadGoogleDevDetails.get(param));

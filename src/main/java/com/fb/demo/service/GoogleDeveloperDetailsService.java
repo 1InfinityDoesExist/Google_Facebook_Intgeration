@@ -21,6 +21,6 @@ public interface GoogleDeveloperDetailsService {
 
     public void deleteGoogeDeveloperDetails(String tenantName) throws Exception;
 
-    public void partiallyUpdateGoogleDevDetails(GoogleDevUpdateRequest googleDeveUpdateRequest,
+    public void partiallyUpdateGoogleDevDetails(GoogleDevUpdateRequest googleDevUpdateRequest,
                     String tenantName) throws Exception;
 }
