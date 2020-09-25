@@ -11,14 +11,15 @@ import com.fb.demo.model.response.FbDevCreateResponse;
 public interface FbDeveloperDetailsService {
 
     public FbDevCreateResponse saveFbDeveloperDetails(
-                    FbDeveloperDetailsCreateRequest fbDeveloperDetailsCreateRequest);
+                    FbDeveloperDetailsCreateRequest fbDeveloperDetailsCreateRequest,
+                    String tenantName) throws Exception;
 
-    public FbDeveloperDetails getFbDeveloperDetailsByTenantName(String tenantName);
+    public FbDeveloperDetails getFbDeveloperDetailsByTenantName(String tenantName) throws Exception;
 
-    public List<FbDeveloperDetails> getAllDeveloperDetails();
+    public List<FbDeveloperDetails> getAllDeveloperDetails() throws Exception;
 
-    public void deleteFbDeveloperDetails(String tenantName);
+    public void deleteFbDeveloperDetails(String tenantName) throws Exception;
 
     public void updateFbDeveloperDetails(FbDeveloperDetailsUpdateRequest fbDevUpdateRequest,
-                    String tenantName);
+                    String tenantName) throws Exception;
 }
