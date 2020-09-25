@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<script type="text/javascript">
+	function getURLParameter(name) {
+		return decodeURIComponent((RegExp(name + '=' + '(.+?)(&|$)', 'i').exec(
+				location.search) || [ , "" ])[1]);
+	}
+	var tech;
+	if (getURLParameter('googleToken') != null
+			&& getURLParameter('googleToken').length > 0) {
+		tech = getURLParameter('googleToken');
+	} else if (getURLParameter('fbAccessToken') != null
+			&& getURLParameter('fbAccessToken').length > 0) {
+		tech = getURLParameter('fbAccessToken');
+	}
+	console.log(tech);
+	function sendStatus(tech) {
+		app.loginStatus(tech);
+	};
+</script>
+</head>
+<body>
+	<p>{</p>
+	<p>
+		"Token " :
+		<script type="text/javascript">
+			document.write(tech)
+		</script>
+	</p>
+	<p>}</p>
+</body>
+</html>
