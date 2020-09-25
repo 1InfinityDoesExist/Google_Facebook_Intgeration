@@ -16,7 +16,7 @@ public class GoogleDeveloperDetails extends BaseEntity implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private Integer tenant;
+    private Integer parentTenant;
     private String clientId;
     private String clientSecret;
     private String redirectUrl;
