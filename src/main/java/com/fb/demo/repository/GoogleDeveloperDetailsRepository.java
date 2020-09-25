@@ -8,6 +8,6 @@ import com.fb.demo.entity.GoogleDeveloperDetails;
 public interface GoogleDeveloperDetailsRepository
                 extends JpaRepository<GoogleDeveloperDetails, Integer> {
 
-    public GoogleDeveloperDetails findByTenant(Integer id);
+    public GoogleDeveloperDetails findByParentTenant(Integer id);
 
 }

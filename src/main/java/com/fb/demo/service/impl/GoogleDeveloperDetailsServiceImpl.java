@@ -60,7 +60,7 @@ public class GoogleDeveloperDetailsServiceImpl implements GoogleDeveloperDetails
             throw new TenantNotFoundException("Tenant not found.");
         }
         GoogleDeveloperDetails googleDeveloperDetails =
-                        googleDeveloperDetailsRepository.findByTenant(tenant.getId());
+                        googleDeveloperDetailsRepository.findByParentTenant(tenant.getId());
         if (googleDeveloperDetails == null) {
             throw new GoogleDeveloperDetailsNotFound(
                             "No googleDeveloperDetails found for the given tenant :"
@@ -88,7 +88,7 @@ public class GoogleDeveloperDetailsServiceImpl implements GoogleDeveloperDetails
             throw new TenantNotFoundException("Tenant not found.");
         }
         GoogleDeveloperDetails googleDeveloperDetails =
-                        googleDeveloperDetailsRepository.findByTenant(tenant.getId());
+                        googleDeveloperDetailsRepository.findByParentTenant(tenant.getId());
         if (googleDeveloperDetails == null) {
             throw new GoogleDeveloperDetailsNotFound(
                             "No googleDeveloperDetails found for the given tenant :"
@@ -107,7 +107,7 @@ public class GoogleDeveloperDetailsServiceImpl implements GoogleDeveloperDetails
             throw new TenantNotFoundException("Tenant not found.");
         }
         GoogleDeveloperDetails googleDeveloperDetails =
-                        googleDeveloperDetailsRepository.findByTenant(tenant.getId());
+                        googleDeveloperDetailsRepository.findByParentTenant(tenant.getId());
         if (googleDeveloperDetails == null) {
             throw new GoogleDeveloperDetailsNotFound(
                             "No googleDeveloperDetails found for the given tenant :"

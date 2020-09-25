@@ -8,8 +8,6 @@ import lombok.Setter;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GoogleDevCreateRequest {
-
-    private String tenant;
     private String clientId;
     private String clientSecret;
     private String redirectUrl;
