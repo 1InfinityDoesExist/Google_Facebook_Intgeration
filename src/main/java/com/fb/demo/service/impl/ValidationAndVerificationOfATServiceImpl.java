@@ -3,19 +3,24 @@ package com.fb.demo.service.impl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import com.fb.demo.entity.FbDeveloperDetails;
+import com.fb.demo.entity.GoogleDeveloperDetails;
 import com.fb.demo.entity.Tenant;
 import com.fb.demo.exception.FbAccessTokenValidationException;
 import com.fb.demo.exception.FbDeveloperDetailsNotFoundException;
+import com.fb.demo.exception.GoogleDeveloperDetailsNotFound;
 import com.fb.demo.exception.TenantNotFoundException;
 import com.fb.demo.repository.FbDeveloperDetailsRepository;
+import com.fb.demo.repository.GoogleDeveloperDetailsRepository;
 import com.fb.demo.repository.TenantRepository;
 import com.fb.demo.service.ValidationAndVerificationOfATService;
 import com.mashape.unirest.http.HttpResponse;
@@ -27,12 +32,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ValidationAndVerificationOfATServiceImpl
                 implements ValidationAndVerificationOfATService {
-
     @Autowired
     private TenantRepository tenantRepository;
 
     @Autowired
     private FbDeveloperDetailsRepository fbDeveloperDetailsRepository;
+
+    @Autowired
+    private GoogleDeveloperDetailsRepository googleDeveloperDetailsRepository;
 
     @Value("${facebook.token.verification.url}")
     public String facebookTokenVerficationUrl;
@@ -42,6 +49,13 @@ public class ValidationAndVerificationOfATServiceImpl
 
     @Value("${facebook.dummy.access.token.verification.url}")
     public String facebookAccessTokenValidatorUrl;
+
+    @Value("${google.token.verification.url1}")
+    public String googleTokenVerificationUrl1;
+
+    @Value("${gogole.token.verification.uril2}")
+    public String googleTokenVerificationUrl2;
+
 
     @Override
     public void verifyAndValidateFacebookAccessToken(String accessToken, String tenant)
@@ -142,9 +156,51 @@ public class ValidationAndVerificationOfATServiceImpl
     }
 
     @Override
-    public void verifyAndValidateGoogleAccessToken(String accessToken) {
-        // TODO Auto-generated method stub
-
+    public boolean verifyAndValidateGoogleAccessToken(String accessToken, String tenant)
+                    throws Exception {
+        log.info("::::::Varifying input accesstoken with actual accessToken::::");
+        Tenant tenantFromDB = tenantRepository.getTenantByName(tenant);
+        if (tenantFromDB == null) {
+            throw new TenantNotFoundException("Tenant not found.");
+        }
+        GoogleDeveloperDetails googleDeveloperDetails =
+                        googleDeveloperDetailsRepository.findByParentTenant(tenantFromDB.getId());
+        if (googleDeveloperDetails == null) {
+            throw new GoogleDeveloperDetailsNotFound(
+                            "GoogleDeveloperDetails not found for the given tenant : "
+                                            + tenantFromDB.getName());
+        }
+        String finalData = null;
+        StringBuffer stringBuffer;
+        try {
+            URL url = new URL(googleTokenVerificationUrl2 + accessToken);
+            URLConnection urlConnection = url.openConnection();
+            BufferedReader bufferReader = new BufferedReader(
+                            new InputStreamReader(urlConnection.getInputStream()));
+            stringBuffer = new StringBuffer();
+            String inputLine;
+            while ((inputLine = bufferReader.readLine()) != null) {
+                stringBuffer.append(inputLine + "\n");
+            }
+            finalData = stringBuffer.toString();
+            log.info("::::::finalData : {}", finalData);
+            JSONObject jsonObject = (JSONObject) new JSONParser().parse(finalData);
+            for (Object object : jsonObject.keySet()) {
+                String param = (String) object;
+                if (param.equalsIgnoreCase("azp") || param.equalsIgnoreCase("aup")) {
+                    if (googleDeveloperDetails.getClientId().equals(jsonObject.get(param))) {
+                        return true;
+                    }
+                }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

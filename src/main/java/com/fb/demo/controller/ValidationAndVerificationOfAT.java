@@ -1,5 +1,8 @@
 package com.fb.demo.controller;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,17 +31,34 @@ public class ValidationAndVerificationOfAT {
     private ValidationAndVerificationOfATService validationAndVerificationOfATService;
 
 
-    @GetMapping(path = "/google")
-    @ApiImplicitParams({@ApiImplicitParam(name = "accessToken", paramType = "path")})
+    @GetMapping(path = "/google/{tenant}")
+    @ApiImplicitParams({@ApiImplicitParam(name = "accessToken", paramType = "path"),
+                @ApiImplicitParam(name = "tenant", paramType = "path")})
     public ResponseEntity<?> verifyAndValidateGoogleAccessToken(
-                    @RequestParam(name = "accessToken", required = true) String accessToken)
+                    @RequestParam(name = "accessToken", required = true) String accessToken,
+                    @PathVariable(name = "tenant", required = true) String tenant)
                     throws Exception {
         try {
-            validationAndVerificationOfATService.verifyAndValidateGoogleAccessToken(accessToken);
-        } catch (Exception ex) {
-
+            boolean isValidAndVerified = validationAndVerificationOfATService
+                            .verifyAndValidateGoogleAccessToken(accessToken,
+                                            tenant);
+            if (isValidAndVerified) {
+                return ResponseEntity.status(HttpStatus.OK)
+                                .body(new ModelMap().addAttribute("validate", "Success")
+                                                .addAttribute("verified", "Success"));
+            }
+            return ResponseEntity.status(HttpStatus.OK)
+                            .body(new ModelMap().addAttribute("mgs", "Invalid access token"));
+        } catch (final MalformedURLException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(new ModelMap().addAttribute("msg", ex.getMessage()));
+        } catch (final IOException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(new ModelMap().addAttribute("msg", ex.getMessage()));
+        } catch (final ParseException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(new ModelMap().addAttribute("msg", ex.getMessage()));
         }
-        return null;
     }
 
 
