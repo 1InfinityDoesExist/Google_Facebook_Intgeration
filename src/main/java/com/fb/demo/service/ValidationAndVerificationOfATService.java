@@ -8,6 +8,7 @@ public interface ValidationAndVerificationOfATService {
     public void verifyAndValidateFacebookAccessToken(String accessToken,
                     String tenant) throws Exception;
 
-    public void verifyAndValidateGoogleAccessToken(String accessToken) throws Exception;
+    public boolean verifyAndValidateGoogleAccessToken(String accessToken, String tenant)
+                    throws Exception;
 
 }
