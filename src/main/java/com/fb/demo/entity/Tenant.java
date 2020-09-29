@@ -1,10 +1,14 @@
 package com.fb.demo.entity;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,4 +32,8 @@ public class Tenant extends BaseEntity implements Serializable {
     private String tenantType;
     private String organizationEmail;
     private String organizationMobileNumber;
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.REFRESH}, orphanRemoval = true,
+                    mappedBy = "parentTenant")
+    @JsonIgnoreProperties("parentTenant")
+    private EmailProp emailProp;
 }
