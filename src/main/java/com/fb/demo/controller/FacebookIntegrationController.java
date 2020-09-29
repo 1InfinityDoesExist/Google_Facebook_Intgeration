@@ -20,30 +20,40 @@ import com.fb.demo.model.request.FbDeveloperDetailsCreateRequest;
 import com.fb.demo.model.request.FbDeveloperDetailsUpdateRequest;
 import com.fb.demo.model.response.FbDevCreateResponse;
 import com.fb.demo.service.FbDeveloperDetailsService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController("v1FacebookIntegrationController")
 @RequestMapping(path = "/v1/facebook")
 @Slf4j
+@Api(value = "facebook integration", description = " Facebook integration api",
+                tags = {"Facebook Integration"})
 public class FacebookIntegrationController {
 
     @Autowired
     private FbDeveloperDetailsService fbDeveloperDetailsService;
 
-    @PostMapping(path = "/{tenantName}/create", produces = "application/json",
-                    consumes = "application/json")
-    @ApiImplicitParams({@ApiImplicitParam(name = "teanntName", paramType = "path")})
-    public ResponseEntity<?> createFbDevDetails(@RequestBody(
-                    required = true) FbDeveloperDetailsCreateRequest fbDeveloperDetailsCreateRequest,
-                    @PathVariable(name = "tenantName", required = true) String tenantName)
+    @PostMapping(path = "/{tenantName}/create", produces = {"application/json"},
+                    consumes = {"application/json"})
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "tenantName", value = "", required = true,
+                    paramType = "path", dataType = "String", example = "Google1")})
+    @ApiOperation(value = "persistFbDeveloperDetailsInDB", nickname = "saveFbDeveoperDetails")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Success",
+                    response = ModelMap.class)})
+    public ResponseEntity<?> createFbDevDetails(
+                    @RequestBody(required = true) FbDeveloperDetailsCreateRequest fbCredDetails,
+                    @PathVariable(value = "tenantName", required = true) String tenantName)
                     throws Exception {
         log.info("Inside FacebookIntegrationController class, createFbDevDetails method:::::");
         try {
             FbDevCreateResponse response = fbDeveloperDetailsService.saveFbDeveloperDetails(
-                            fbDeveloperDetailsCreateRequest,
-                            tenantName);
+                            fbCredDetails, tenantName);
             return ResponseEntity.status(HttpStatus.CREATED)
                             .body(new ModelMap().addAttribute("msg", response.getMsg())
                                             .addAttribute("id", response.getId()));
@@ -57,7 +67,8 @@ public class FacebookIntegrationController {
     @GetMapping(path = "/{tenantName}/get", produces = "application/json")
     @ApiImplicitParams({@ApiImplicitParam(name = "tenantName", paramType = "path")})
     public ResponseEntity<?> getFbDeveloperDetailsByTenantName(
-                    @PathVariable(name = "tenantName", required = true) String tenantName)
+                    @ApiParam(value = "tenantName", required = true) @PathVariable(
+                                    name = "tenantName", required = true) String tenantName)
                     throws Exception {
         log.info("Inside FacebookIntegrationController class, getFbDeveloperDetailsByTenantName method:::::");
         try {
@@ -89,7 +100,8 @@ public class FacebookIntegrationController {
     @DeleteMapping(path = "/{tenantName}/delete")
     @ApiImplicitParams({@ApiImplicitParam(name = "tenantName", paramType = "path")})
     public ResponseEntity<?> deleteFbDeveloperDetails(
-                    @PathVariable(name = "tenantName", required = true) String tenantName)
+                    @ApiParam(value = "tenantName", required = true) @PathVariable(
+                                    name = "tenantName", required = true) String tenantName)
                     throws Exception {
         log.info("Inside FacebookIntegrationController class, deleteFbDeveloperDetails method:::::");
         try {
@@ -111,7 +123,8 @@ public class FacebookIntegrationController {
     @ApiImplicitParams({@ApiImplicitParam(name = "tenantName", paramType = "path")})
     public ResponseEntity<?> updateFbDeveloperDetails(@RequestBody(
                     required = true) FbDeveloperDetailsUpdateRequest fbDevUpdateRequest,
-                    @PathVariable(name = "tenantName", required = true) String tenantName)
+                    @ApiParam(value = "tenantName", required = true) @PathVariable(
+                                    name = "tenantName", required = true) String tenantName)
                     throws Exception {
         log.info("Inside FacebookIntegrationController class, updateFbDeveloperDetails method:::::");
         try {
