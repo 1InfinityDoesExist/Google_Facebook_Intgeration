@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FbDeveloperDetailsCreateRequest {
-
     private String clientId;
     private String clientSecret;
     private String redirectUrl;
