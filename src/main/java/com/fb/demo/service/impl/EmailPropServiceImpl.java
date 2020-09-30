@@ -1,8 +1,11 @@
 package com.fb.demo.service.impl;
 
 import java.util.List;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fb.demo.entity.EmailProp;
 import com.fb.demo.exception.EmailPropNotFoundException;
 import com.fb.demo.model.request.EmailPropCreateRequest;
@@ -82,8 +85,30 @@ public class EmailPropServiceImpl implements EmailPropService {
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void updateEmailProp(EmailPropUpdateRequest emailPropUpdateRequest, Integer id) {
+    public void updateEmailProp(EmailPropUpdateRequest emailPropUpdateRequest, Integer id)
+                    throws Exception {
+        if (id == null || emailPropUpdateRequest == null) {
+            throw new InvalidInputException("Invalid input");
+        }
+        EmailProp emailProp = emailPropRepository.findEmailPropById(id);
+        if (emailProp != null) {
+            JSONObject dbEmailProp = (JSONObject) new JSONParser()
+                            .parse(new ObjectMapper().writeValueAsString(emailProp));
+            JSONObject payloadEmailProp = (JSONObject) new JSONParser()
+                            .parse(new ObjectMapper().writeValueAsString(emailPropUpdateRequest));
+
+            for (Object object : payloadEmailProp.keySet()) {
+                String param = (String) object;
+                dbEmailProp.put(param, payloadEmailProp.get(param));
+            }
+            emailPropRepository.save(new ObjectMapper().readValue(dbEmailProp.toJSONString(),
+                            EmailProp.class));
+            return;
+        } else {
+            throw new EmailPropNotFoundException("Email prop with id :" + id + " not found");
+        }
 
     }
 
