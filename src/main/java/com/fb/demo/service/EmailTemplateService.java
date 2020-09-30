@@ -11,13 +11,15 @@ import com.fb.demo.model.response.EmailTemplateResponse;
 public interface EmailTemplateService {
 
     public EmailTemplateResponse createEmailTemplate(
-                    EmailTemplateCreateRequest emailTemplateCreateRequest);
+                    EmailTemplateCreateRequest emailTemplateCreateRequest) throws Exception;
 
-    public EmailTemplate getEmailTemplate(Integer id);
+    public EmailTemplate getEmailTemplate(Integer id) throws Exception;
 
     public List<EmailTemplate> getAllEmailTemplate();
 
-    public void deleteEmailTemplate(Integer id);
+    public void deleteEmailTemplate(Integer id) throws Exception;
 
-    public void updateEmailTemplate(EmailTemplateUpdateRequest emailTemplateUpdateRequest);
+    public void updateEmailTemplate(EmailTemplateUpdateRequest emailTemplateUpdateRequest,
+                    Integer id)
+                    throws Exception;
 }
