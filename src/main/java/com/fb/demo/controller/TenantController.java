@@ -7,6 +7,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -99,5 +100,20 @@ public class TenantController {
                             .body(new ModelMap().addAttribute("msg", ex.getMessage()));
 
         }
+    }
+
+    @DeleteMapping(path = "/delete")
+    public ResponseEntity<?> deleteTenant(
+                    @RequestParam(name = "tenantName", required = true) String tenantName)
+                    throws Exception {
+        try {
+            tenantService.deleteTenant(tenantName);
+            return ResponseEntity.status(HttpStatus.OK)
+                            .body(new ModelMap().addAttribute("msg", "Successfully Deeted"));
+        } catch (final TenantNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(new ModelMap().addAttribute("msg", ex.getMessage()));
+        }
+
     }
 }

@@ -21,4 +21,6 @@ public interface TenantService {
     public void partiallyUpdateTenant(TenantUpdateReqeust tenantUpdateReqeust, String tenantName)
                     throws Exception;
 
+    public void deleteTenant(String tenantName) throws Exception;
+
 }
