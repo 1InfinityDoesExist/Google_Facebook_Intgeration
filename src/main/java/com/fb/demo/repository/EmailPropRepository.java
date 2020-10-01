@@ -7,4 +7,6 @@ import com.fb.demo.entity.EmailProp;
 @Repository
 public interface EmailPropRepository extends JpaRepository<EmailProp, Integer> {
 
+    public EmailProp findEmailPropById(Integer id);
+
 }

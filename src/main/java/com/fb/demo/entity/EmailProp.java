@@ -14,9 +14,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @Entity(name = "EmailProp")
 @Table(name = "email_prop")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -36,13 +38,13 @@ public class EmailProp implements Serializable {
     private int port;
     @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "parentTenantId", columnDefinition = "bigint", referencedColumnName = "id",
-                    nullable = false)
+                    nullable = false, insertable = false, updatable = false)
     @JsonIgnoreProperties("emailProp")
     private Tenant parentTenant;
     private String application;
     private String provider;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.REFRESH}, orphanRemoval = true,
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.REFRESH}, orphanRemoval = false,
                     mappedBy = "emailProp")
     @JsonIgnoreProperties("emailProp")
     private EmailTemplate emailTemplate;

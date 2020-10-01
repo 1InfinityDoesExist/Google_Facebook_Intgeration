@@ -31,10 +31,9 @@ public class EmailTemplate implements Serializable {
     private String name;
     private String format;
     private String subject;
-
     @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "emailPropId", columnDefinition = "bigint", referencedColumnName = "id",
-                    nullable = false)
+                    nullable = false, insertable = false, updatable = false)
     @JsonIgnoreProperties("emailTemplate")
     private EmailProp emailProp;
 }

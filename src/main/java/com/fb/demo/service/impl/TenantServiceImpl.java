@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fb.demo.entity.Gender;
 import com.fb.demo.entity.Tenant;
 import com.fb.demo.exception.TenantAlreadyExistException;
 import com.fb.demo.exception.TenantNotFoundException;
@@ -91,6 +92,17 @@ public class TenantServiceImpl implements TenantService {
         tenantRepository.save(
                         new ObjectMapper().readValue(dbTenantJson.toJSONString(), Tenant.class));
         return;
+    }
+
+    @Override
+    public void deleteTenant(String tenantName) throws Exception {
+        Tenant tenantFromDB = tenantRepository.getTenantByName(tenantName);
+        if (tenantFromDB == null) {
+            throw new TenantNotFoundException("Tenant not found.");
+        }
+        tenantRepository.delete(tenantFromDB);
+        return;
+
     }
 
 }
