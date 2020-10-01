@@ -13,4 +13,6 @@ public interface TenantRepository extends JpaRepository<Tenant, Integer> {
 
     public Page<Tenant> findTenantByIsActive(boolean b, Pageable pageable);
 
+    public Tenant getTenantById(Integer parentTenant);
+
 }
