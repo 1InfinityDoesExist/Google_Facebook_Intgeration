@@ -4,6 +4,8 @@ import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -34,7 +36,9 @@ public class Tenant extends BaseEntity implements Serializable {
     private String tenantType;
     private String organizationEmail;
     private String organizationMobileNumber;
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE}, orphanRemoval = false,
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, orphanRemoval = false,
                     mappedBy = "parentTenant")
     @JsonIgnoreProperties("parentTenant")
     private EmailProp emailProp;
