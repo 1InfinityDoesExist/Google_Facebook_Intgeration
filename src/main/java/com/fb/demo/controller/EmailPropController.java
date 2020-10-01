@@ -82,14 +82,15 @@ public class EmailPropController {
         }
     }
 
-    @PutMapping(path = "/")
+    @PutMapping(path = "/update")
     public ResponseEntity<?> updateEmailProp(
                     @RequestBody EmailPropUpdateRequest emailPropUpdateRequest,
                     @RequestParam(value = "id", required = true) Integer id) throws Exception {
         try {
-            emailPropService.updateEmailProp(emailPropUpdateRequest, id);
+            EmailProp emailProp = emailPropService.updateEmailProp(emailPropUpdateRequest, id);
             return ResponseEntity.status(HttpStatus.ACCEPTED)
-                            .body(new ModelMap().addAttribute("msg", "Successfully updated"));
+                            .body(new ModelMap().addAttribute("msg", "Successfully updated")
+                                            .addAttribute("response", emailProp));
         } catch (final InvalidInputException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body(new ModelMap().addAttribute("msg", ex.getMessage()));

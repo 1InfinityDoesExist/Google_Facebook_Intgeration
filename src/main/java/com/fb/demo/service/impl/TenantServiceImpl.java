@@ -93,4 +93,15 @@ public class TenantServiceImpl implements TenantService {
         return;
     }
 
+    @Override
+    public void deleteTenant(String tenantName) throws Exception {
+        Tenant tenantFromDB = tenantRepository.getTenantByName(tenantName);
+        if (tenantFromDB == null) {
+            throw new TenantNotFoundException("Tenant not found.");
+        }
+        tenantRepository.delete(tenantFromDB);
+        return;
+
+    }
+
 }

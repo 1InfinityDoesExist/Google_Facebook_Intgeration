@@ -10,15 +10,13 @@ import lombok.Setter;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmailPropUpdateRequest {
-
     private String host;
     private String userName;
     private String email;
     private String password;
-    private int sslPort;
-    private int port;
-    private Tenant parentTenant;
+    private Integer sslPort;
+    private Integer port;
     private String application;
     private String provider;
-    private EmailTemplate emailTemplate;
+    // private EmailTemplate emailTemplate;
 }

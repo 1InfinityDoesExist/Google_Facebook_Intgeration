@@ -32,7 +32,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             emailTemplate.setEmailProp(emailTemplateCreateRequest.getEmailProp());
             emailTemplate.setFormat(emailTemplateCreateRequest.getFormat());
             emailTemplate.setName(emailTemplateCreateRequest.getName());
-            emailTemplate.setSubject(emailTemplate.getSubject());
+            emailTemplate.setSubject(emailTemplateCreateRequest.getSubject());
             emailTemplateRepository.save(emailTemplate);
             emailTemplateCreateResponse.setId(emailTemplate.getId());
             emailTemplateCreateResponse.setMsg("Successfully created");

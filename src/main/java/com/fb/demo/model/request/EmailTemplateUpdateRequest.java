@@ -12,5 +12,4 @@ public class EmailTemplateUpdateRequest {
     private String name;
     private String format;
     private String subject;
-    private EmailProp emailProp;
 }

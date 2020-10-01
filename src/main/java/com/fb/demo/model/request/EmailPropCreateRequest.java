@@ -25,5 +25,4 @@ public class EmailPropCreateRequest implements Serializable {
     private Tenant parentTenant;
     private String application;
     private String provider;
-    private EmailTemplate emailTemplate;
 }

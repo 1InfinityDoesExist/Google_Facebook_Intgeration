@@ -30,7 +30,6 @@ public class EmailPropServiceImpl implements EmailPropService {
             EmailProp emailProp = new EmailProp();
             emailProp.setApplication(emailPropRequest.getApplication());
             emailProp.setEmail(emailPropRequest.getEmail());
-            emailProp.setEmailTemplate(emailPropRequest.getEmailTemplate());
             emailProp.setHost(emailPropRequest.getHost());
             emailProp.setParentTenant(emailPropRequest.getParentTenant());
             emailProp.setPassword(emailPropRequest.getPassword());
@@ -87,13 +86,15 @@ public class EmailPropServiceImpl implements EmailPropService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void updateEmailProp(EmailPropUpdateRequest emailPropUpdateRequest, Integer id)
+    public EmailProp updateEmailProp(EmailPropUpdateRequest emailPropUpdateRequest, Integer id)
                     throws Exception {
+        log.info("::::::EmailPropServiceImpl Class, updateEmailProp method:::::");
         if (id == null || emailPropUpdateRequest == null) {
             throw new InvalidInputException("Invalid input");
         }
         EmailProp emailProp = emailPropRepository.findEmailPropById(id);
         if (emailProp != null) {
+            log.info("::::::emailProp Id {}", emailProp.getId());
             JSONObject dbEmailProp = (JSONObject) new JSONParser()
                             .parse(new ObjectMapper().writeValueAsString(emailProp));
             JSONObject payloadEmailProp = (JSONObject) new JSONParser()
@@ -101,15 +102,18 @@ public class EmailPropServiceImpl implements EmailPropService {
 
             for (Object object : payloadEmailProp.keySet()) {
                 String param = (String) object;
+                log.info(":::::ParamName {}", param);
                 dbEmailProp.put(param, payloadEmailProp.get(param));
             }
-            emailPropRepository.save(new ObjectMapper().readValue(dbEmailProp.toJSONString(),
-                            EmailProp.class));
-            return;
+            log.info("::::::All values set::::");
+            log.info(":::Testing::{}", new ObjectMapper().readValue(dbEmailProp.toJSONString(),
+                            EmailProp.class).getParentTenant().getId());
+            return emailPropRepository
+                            .save(new ObjectMapper().readValue(dbEmailProp.toJSONString(),
+                                            EmailProp.class));
         } else {
             throw new EmailPropNotFoundException("Email prop with id :" + id + " not found");
         }
-
     }
 
 }

@@ -12,8 +12,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity(name = "Tenant")
+@ToString
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -32,7 +34,7 @@ public class Tenant extends BaseEntity implements Serializable {
     private String tenantType;
     private String organizationEmail;
     private String organizationMobileNumber;
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.REFRESH}, orphanRemoval = true,
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE}, orphanRemoval = false,
                     mappedBy = "parentTenant")
     @JsonIgnoreProperties("parentTenant")
     private EmailProp emailProp;

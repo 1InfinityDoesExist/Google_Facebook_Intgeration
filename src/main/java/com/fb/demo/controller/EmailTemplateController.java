@@ -97,7 +97,7 @@ public class EmailTemplateController {
         try {
             emailTemplateService.updateEmailTemplate(emailTemplateUpdateRequest, id);
             return ResponseEntity.status(HttpStatus.OK)
-                            .body(new ModelMap().addAttribute("response", "Successfully deleted"));
+                            .body(new ModelMap().addAttribute("response", "Successfully udated"));
         } catch (final InvalidInputException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body(new ModelMap().addAttribute("msg", ex.getMessage()));

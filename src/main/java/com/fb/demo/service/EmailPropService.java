@@ -19,6 +19,6 @@ public interface EmailPropService {
 
     public void deleteEmilProp(Integer id) throws Exception;
 
-    public void updateEmailProp(EmailPropUpdateRequest emailPropUpdateRequest, Integer id)
+    public EmailProp updateEmailProp(EmailPropUpdateRequest emailPropUpdateRequest, Integer id)
                     throws Exception;
 }
