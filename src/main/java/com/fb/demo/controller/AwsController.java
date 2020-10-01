@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.fb.demo.aws.AWSUtils;
@@ -20,6 +21,14 @@ public class AwsController {
     @GetMapping(path = "/getFolders")
     public ResponseEntity<?> getAllFolders() {
         List<String> listOfFolders = awsUtils.listAllFolders();
+        return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ModelMap().addAttribute("response", listOfFolders));
+    }
+
+    @GetMapping(path = "/getPics/{folderName}")
+    public ResponseEntity<?> getAllPicsOfGivenFolder(
+                    @PathVariable(value = "folderName", required = true) String folderName) {
+        List<String> listOfFolders = awsUtils.getAllPicsOfGivenFolder(folderName);
         return ResponseEntity.status(HttpStatus.OK)
                         .body(new ModelMap().addAttribute("response", listOfFolders));
 
