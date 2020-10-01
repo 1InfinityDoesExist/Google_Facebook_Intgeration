@@ -50,4 +50,33 @@ public class AWSUtils {
         return listOfFolders;
     }
 
+
+    /*
+     * Get the list of pictures stored in a given folder
+     */
+    public List<String> getAllPicsOfGivenFolder(String folderName) {
+        log.info(":::::Inside AwsUtils Class, getAllPicsOfGivenFolder method:::::");
+        List<String> keys = new ArrayList<String>();
+        AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(region)
+                        .withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).build();
+        ListObjectsRequest listObjectRequest = new ListObjectsRequest().withBucketName(bucketName)
+                        .withPrefix(folderName + "/");
+        ObjectListing objectListing = s3Client.listObjects(listObjectRequest);
+        for (;;) {
+            List<S3ObjectSummary> s3ObjectSummary = objectListing.getObjectSummaries();
+            if (s3ObjectSummary.size() < 1) {
+                break;
+            }
+            s3ObjectSummary.forEach(s -> {
+                if (!s.getKey().endsWith("/")) {
+                    keys.add("https://" + bucketName + ".s3." + region + ".amazonaws.com/"
+                                    + s.getKey());
+                }
+            });
+            objectListing = s3Client.listNextBatchOfObjects(objectListing);
+        }
+        return keys;
+    }
+
 }
