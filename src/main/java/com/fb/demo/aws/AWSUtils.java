@@ -1,16 +1,24 @@
 package com.fb.demo.aws;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import lombok.extern.slf4j.Slf4j;
 
@@ -79,4 +87,56 @@ public class AWSUtils {
         return keys;
     }
 
+
+    public String uploadProfilePicToS3(MultipartFile file, String folderName) throws Exception {
+        AWSCredentials awsCredentails = new BasicAWSCredentials(accessKey, secretKey);
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(region)
+                        .withCredentials(new AWSStaticCredentialsProvider(awsCredentails)).build();
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName,
+                        folderName + "/" + generateFileName(file),
+                        multipartFileToFile(file))
+                                        .withCannedAcl(CannedAccessControlList.PublicReadWrite);
+        PutObjectResult putObjectResult = s3Client.putObject(putObjectRequest);
+        log.info(":::::putObjectResult {}", putObjectResult.getContentMd5());
+        return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" +
+                        putObjectRequest.getKey();
+    }
+
+    /*
+     * Convert MultiPart file to File because PutObjectRequest( String bucketName, String fileName,
+     * File file)
+     */
+    private File multipartFileToFile(MultipartFile multiPartFile) throws Exception {
+        File file = new File(multiPartFile.getOriginalFilename());
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(multiPartFile.getBytes());
+        fos.close();
+        return file;
+    }
+
+    /*
+     * 
+     * This is just to remove any spaces in the file Name , spaces created lots of issues.
+     */
+    private String generateFileName(MultipartFile file) {
+        return new Date().getTime() + "-" + file.getOriginalFilename().replace(" ", "_");
+    }
+
+
+    /*
+     * Delete a particular file in from the S3 bucket
+     */
+    public void deleteFile(String url) {
+        AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(region)
+                        .withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).build();
+        String input = url.replace("https://", "");
+        log.info(":::::bucketName {}", input.substring(0, input.indexOf(".")));
+        log.info("::::::: key {}", input.substring(input.indexOf("/") + 1));
+        DeleteObjectRequest deleteObjectRequest =
+                        new DeleteObjectRequest(input.substring(0, input.indexOf(".")),
+                                        input.substring(input.indexOf("/") + 1));
+        s3Client.deleteObject(deleteObjectRequest);
+        return;
+    }
 }
