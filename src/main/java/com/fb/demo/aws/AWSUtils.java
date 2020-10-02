@@ -40,6 +40,7 @@ public class AWSUtils {
 
     /*
      * Given BucketName Retrieve All The Folders And Their Contents
+     * In S3 we have buckets and keys. here folder means keys.
      */
     public List<String> listAllFolders() {
         log.info(":::::Inside AwsUtil Class, getAllFolders:::::");
