@@ -11,8 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.redshift.model.BucketNotFoundException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
@@ -20,6 +22,7 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.fb.demo.exception.BucketAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -34,7 +37,6 @@ public class AWSUtils {
     private String bucketName;
     @Value("${amazon.aws.region}")
     private String region;
-
 
     /*
      * Given BucketName Retrieve All The Folders And Their Contents
@@ -57,7 +59,6 @@ public class AWSUtils {
         }
         return listOfFolders;
     }
-
 
     /*
      * Get the list of pictures stored in a given folder
@@ -87,7 +88,6 @@ public class AWSUtils {
         return keys;
     }
 
-
     public String uploadProfilePicToS3(MultipartFile file, String folderName) throws Exception {
         AWSCredentials awsCredentails = new BasicAWSCredentials(accessKey, secretKey);
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(region)
@@ -115,13 +115,11 @@ public class AWSUtils {
     }
 
     /*
-     * 
      * This is just to remove any spaces in the file Name , spaces created lots of issues.
      */
     private String generateFileName(MultipartFile file) {
         return new Date().getTime() + "-" + file.getOriginalFilename().replace(" ", "_");
     }
-
 
     /*
      * Delete a particular file in from the S3 bucket
@@ -138,5 +136,46 @@ public class AWSUtils {
                                         input.substring(input.indexOf("/") + 1));
         s3Client.deleteObject(deleteObjectRequest);
         return;
+    }
+
+    /*
+     * Create A Bucket
+     */
+    public void createBucket(String bucketName) throws Exception {
+        AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(region)
+                        .withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).build();
+        if (s3Client.doesBucketExistV2(bucketName)) {
+            throw new BucketAlreadyExistException("Bucket already exist");
+        }
+        s3Client.createBucket(bucketName);
+    }
+
+    /*
+     * List Down all the buckets
+     */
+    public List<String> listAllBucket() {
+        List<String> bucketsList = new ArrayList<String>();
+        AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(region)
+                        .withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).build();
+        List<Bucket> listOfBuckets = s3Client.listBuckets();
+        listOfBuckets.forEach(b -> bucketsList.add(b.getName()));
+        return bucketsList;
+    }
+
+    /*
+     * Delete bucket for the given bucket Name
+     */
+    public void deleteBucket(String bucketName2) {
+        log.info("::::bucketName {}", bucketName2);
+        AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(region)
+                        .withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).build();
+        if (!s3Client.doesBucketExistV2(bucketName2)) {
+            throw new BucketNotFoundException("Bucket : " + bucketName2 + " not found");
+        }
+        log.info(":::::About to delete buckete");
+        s3Client.deleteBucket(bucketName2);
     }
 }
