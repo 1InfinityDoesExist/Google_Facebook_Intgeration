@@ -2,6 +2,9 @@ package com.fb.demo.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
@@ -118,6 +121,7 @@ public class FacebookIntegrationController {
                             .body(new ModelMap().addAttribute("msg", ex.getMessage()));
         }
     }
+
 
     @PutMapping(path = "/{tenantName}/update")
     @ApiImplicitParams({@ApiImplicitParam(name = "tenantName", paramType = "path")})

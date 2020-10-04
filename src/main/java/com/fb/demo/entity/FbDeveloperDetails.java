@@ -3,13 +3,14 @@ package com.fb.demo.entity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import org.hibernate.type.TrueFalseType;
+import org.springframework.cache.annotation.CacheConfig;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+@CacheConfig(cacheNames = {"fbDeveloperDetails"})
 @Entity(name = "FbDeveloperDetails")
 @Getter
 @Setter
