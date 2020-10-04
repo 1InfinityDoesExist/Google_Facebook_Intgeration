@@ -4,7 +4,9 @@ import java.util.List;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,9 +53,12 @@ public class FacebookDeveloperDetailsServiceImpl implements FbDeveloperDetailsSe
         return response;
     }
 
+
+    @Cacheable(value = "fbDeveloperDetails", key = "#tenantName", unless = "#result.tenantName == Google2")
     @Override
     public FbDeveloperDetails getFbDeveloperDetailsByTenantName(String tenantName)
                     throws Exception {
+        log.info(":::::::::::::Cache is not Called ::::::::::::::::::::::::");
         log.info(":::::Inside FacebookDeveloperDetailServiceImpl Class, getFbDeveloperDetailsByTenantName method::::");
         Tenant tenant = tenantRepository.getTenantByName(tenantName);
         if (tenant == null) {
@@ -75,6 +80,7 @@ public class FacebookDeveloperDetailsServiceImpl implements FbDeveloperDetailsSe
         return listOfFbDeveloperDetails;
     }
 
+    @CacheEvict(allEntries = true)
     @Override
     public void deleteFbDeveloperDetails(String tenantName) throws Exception {
         log.info(":::::Inside FacebookDeveloperDetailServiceImpl Class, deleteFbDeveloperDetails method::::");
@@ -91,6 +97,7 @@ public class FacebookDeveloperDetailsServiceImpl implements FbDeveloperDetailsSe
         return;
     }
 
+    @CachePut(value = "fbDeveloperDetails")
     @SuppressWarnings("unchecked")
     @Override
     public void updateFbDeveloperDetails(FbDeveloperDetailsUpdateRequest fbDevUpdateRequest,
