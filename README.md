@@ -19,13 +19,13 @@ Issue : The constructor PageRequest(int, int, Sort.Direction, String) is undefin
  Validation and Verification of google accessToken.
  
  Build Error: The type javax.mail.internet.MimeMessage cannot be resolved
-
+In pom.xml add. 
 <!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
-<dependency>
-    <groupId>javax.mail</groupId>
-    <artifactId>javax.mail-api</artifactId>
-    <version>1.6.2</version>
-</dependency>
+&lt;dependency&gt;
+    &lt;groupIdgt;javax.mail&lt;/groupIdgt;
+    &lt;artifactIdgt;javax.mail-api&lt;/artifactIdgt;
+    &lt;versiongt;1.6.2&lt;/versiongt;
+&lt;/dependencygt;
 
 
 
