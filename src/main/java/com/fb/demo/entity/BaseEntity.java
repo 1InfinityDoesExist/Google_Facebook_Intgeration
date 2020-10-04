@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.cache.annotation.CacheConfig;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -18,6 +19,7 @@ import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 
+@CacheConfig(cacheNames = {"BaseEntity"})
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
